@@ -406,14 +406,40 @@
                             })));
 
                             // SMA Overlays
-                            const sma20Series = chart.addLineSeries({ color: '#10b981', lineWidth: 1, priceLineVisible: false, lastValueVisible: false });
+                            const sma20Series = chart.addLineSeries({ color: '#3b82f6', lineWidth: 1, priceLineVisible: false, lastValueVisible: false, title: 'SMA 20' });
                             sma20Series.setData(chartData.filter(d => d.sma20 !== null).map(d => ({ time: d.time, value: d.sma20 })));
 
-                            const sma50Series = chart.addLineSeries({ color: '#6366f1', lineWidth: 2, priceLineVisible: false, lastValueVisible: false });
+                            const sma50Series = chart.addLineSeries({ color: '#f97316', lineWidth: 2, priceLineVisible: false, lastValueVisible: false, title: 'SMA 50' });
                             sma50Series.setData(chartData.filter(d => d.sma50 !== null).map(d => ({ time: d.time, value: d.sma50 })));
                             
-                            const sma200Series = chart.addLineSeries({ color: '#f59e0b', lineWidth: 2, priceLineVisible: false, lastValueVisible: false });
+                            const sma200Series = chart.addLineSeries({ color: '#a855f7', lineWidth: 3, priceLineVisible: false, lastValueVisible: false, title: 'SMA 200' });
                             sma200Series.setData(chartData.filter(d => d.sma200 !== null).map(d => ({ time: d.time, value: d.sma200 })));
+
+                            // Golden Zone (Shaded background)
+                            const goldenZoneSeries = chart.addHistogramSeries({
+                                color: 'rgba(251, 191, 36, 0.1)', // Very faint Amber/Gold
+                                priceFormat: { type: 'volume' },
+                                priceScaleId: 'golden-zone-scale',
+                            });
+                            chart.priceScale('golden-zone-scale').applyOptions({
+                                scaleMargins: { top: 0, bottom: 0 },
+                                visible: false,
+                            });
+                            goldenZoneSeries.setData(chartData.map(d => ({
+                                time: d.time, value: d.golden_zone ? 100 : 0
+                            })));
+
+                            // Buy Dip Markers
+                            const markers = chartData
+                                .filter(d => d.buy_dip)
+                                .map(d => ({
+                                    time: d.time,
+                                    position: 'belowBar',
+                                    color: '#10b981',
+                                    shape: 'arrowUp',
+                                    text: 'BUY DIP'
+                                }));
+                            candlestickSeries.setMarkers(markers);
 
                             // Bollinger Bands
                             const bbUpperSeries = chart.addLineSeries({ color: 'rgba(99, 102, 241, 0.2)', lineWidth: 1, priceLineVisible: false, lastValueVisible: false });
@@ -438,6 +464,16 @@
                                 color: d.close >= d.open ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)',
                             })));
 
+                            // Volume SMA
+                            const volSmaSeries = chart.addLineSeries({
+                                color: 'rgba(100, 116, 139, 0.4)',
+                                lineWidth: 1,
+                                priceScaleId: '',
+                                priceLineVisible: false,
+                                lastValueVisible: false,
+                            });
+                            volSmaSeries.setData(chartData.filter(d => d.vol_sma20 !== null).map(d => ({ time: d.time, value: d.vol_sma20 })));
+
                             // Secondary Pane Charts helper
                             const createSecondaryChart = (container, seriesColor, dataKey) => {
                                 const c = LightweightCharts.createChart(container, {
@@ -451,14 +487,37 @@
 
                             const rsiChart = createSecondaryChart(containers.rsi, '#8b5cf6', 'rsi');
                             // Add RSI levels
-                            const rsiUpper = rsiChart.addLineSeries({ color: 'rgba(239, 68, 68, 0.2)', lineWidth: 1, lineStyle: 2, priceLineVisible: false, lastValueVisible: false });
+                            const rsiUpper = rsiChart.addLineSeries({ color: 'rgba(239, 68, 68, 0.4)', lineWidth: 1, lineStyle: 2, priceLineVisible: false, lastValueVisible: false });
                             rsiUpper.setData(chartData.map(d => ({ time: d.time, value: 70 })));
-                            const rsiLower = rsiChart.addLineSeries({ color: 'rgba(16, 185, 129, 0.2)', lineWidth: 1, lineStyle: 2, priceLineVisible: false, lastValueVisible: false });
+                            
+                            const rsiHealthy = rsiChart.addHistogramSeries({
+                                color: 'rgba(16, 185, 129, 0.05)',
+                                priceScaleId: 'rsi-healthy-scale',
+                            });
+                            rsiChart.priceScale('rsi-healthy-scale').applyOptions({
+                                scaleMargins: { top: 0.3, bottom: 0.5 }, // 50-70 range roughly
+                                visible: false,
+                            });
+                            rsiHealthy.setData(chartData.map(d => ({ time: d.time, value: 100 })));
+
+                            const rsiLower = rsiChart.addLineSeries({ color: 'rgba(16, 185, 129, 0.4)', lineWidth: 1, lineStyle: 2, priceLineVisible: false, lastValueVisible: false });
                             rsiLower.setData(chartData.map(d => ({ time: d.time, value: 30 })));
 
                             const macdChart = createSecondaryChart(containers.macd, '#ec4899', 'macd');
                             const macdSignalSeries = macdChart.addLineSeries({ color: '#6366f1', lineWidth: 1 });
                             macdSignalSeries.setData(chartData.filter(d => d.macd_signal !== null).map(d => ({ time: d.time, value: d.macd_signal })));
+                            
+                            const macdHistSeries = macdChart.addHistogramSeries({
+                                color: '#cbd5e1',
+                            });
+                            macdHistSeries.setData(chartData.filter(d => d.macd !== null && d.macd_signal !== null).map(d => {
+                                const diff = d.macd - d.macd_signal;
+                                return {
+                                    time: d.time,
+                                    value: diff,
+                                    color: diff >= 0 ? 'rgba(16, 185, 129, 0.5)' : 'rgba(239, 68, 68, 0.5)'
+                                };
+                            }));
 
                             const mfiChart = createSecondaryChart(containers.mfi, '#06b6d4', 'mfi');
                             const atrChart = createSecondaryChart(containers.atr, '#64748b', 'atr');

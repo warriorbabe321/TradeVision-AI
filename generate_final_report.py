@@ -22,7 +22,7 @@ def main():
     args = parser.parse_args()
 
     ticker = args.ticker.upper()
-    output_dir = "os.path.join(os.path.dirname(__file__), "final_reports")"
+    output_dir = os.path.join(os.path.dirname(__file__), "final_reports")
     temp_json_path = f"/tmp/{ticker}_analysis.json"
 
     try:

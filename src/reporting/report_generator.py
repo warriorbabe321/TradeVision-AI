@@ -119,9 +119,9 @@ def generate_reports(analysis_data_path, output_dir):
 
 if __name__ == "__main__":
     # Path to the mock analysis data (now matching engine format)
-    mock_data_path = "os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "mock_analysis.json")"
+    mock_data_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "mock_analysis.json")
     
     # Path to save generated reports
-    shared_reports_dir = "os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "reports")"
+    shared_reports_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "reports")
     
     generate_reports(mock_data_path, shared_reports_dir)
