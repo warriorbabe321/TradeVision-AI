@@ -8,7 +8,7 @@ from functools import wraps
 
 # Add project root to sys.path to import fetcher
 # Team Lead: Checked commit ability.
-PROJECT_DIR = "/home/team/shared/stock_analysis_project"
+PROJECT_DIR = os.path.dirname(__file__)
 sys.path.append(PROJECT_DIR)
 from src.data_fetcher.yfinance_fetcher import YFinanceFetcher
 from src.utils.db_utils import log_signal, get_signals, update_signal_status, run_query
@@ -18,8 +18,8 @@ app = Flask(__name__)
 app.secret_key = "tradevision-ultra-secure-key-2026"
 
 # Paths
-REPORTS_DIR = "/home/team/shared/final_reports"
-ACCESS_KEYS_FILE = "/home/team/shared/access_keys.json"
+REPORTS_DIR = os.path.join(os.path.dirname(__file__), "final_reports")
+ACCESS_KEYS_FILE = os.path.join(os.path.dirname(__file__), "access_keys.json")
 
 if not os.path.exists(REPORTS_DIR):
     os.makedirs(REPORTS_DIR)

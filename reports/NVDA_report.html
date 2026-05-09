@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Analysis - NVDA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+    <nav class="bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center">
+        <h1 class="text-xl font-bold text-indigo-600 italic">TradeVision AI</h1>
+    </nav>
+
+    <main class="max-w-6xl mx-auto p-6">
+        <!-- Header Section -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+            <div>
+                <div class="flex items-center gap-3">
+                    <h2 class="text-4xl font-extrabold uppercase">NVDA</h2>
+                    <span class="text-slate-400 font-medium text-xl">NVIDIA Corp.</span>
+                </div>
+                <div class="mt-2 flex items-center gap-4">
+                    <span class="text-3xl font-bold">$875.28</span>
+                    <span class="text-emerald-500 font-bold text-lg">
+                        12.45 (1.44%)
+                    </span>
+                </div>
+            </div>
+            <div class="bg-slate-50 border-slate-500 text-slate-600 border-2 p-4 rounded-2xl flex flex-col items-center min-w-[200px]">
+                <span class="text-xs font-bold uppercase tracking-widest">Signal Strength</span>
+                <span class="text-3xl font-black">STRONG BUY</span>
+                <span class="text-sm font-bold">87% Confidence</span>
+            </div>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            <!-- Left Column: Summary & Sentiment -->
+            <div class="md:col-span-1 flex flex-col gap-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="text-lg font-bold mb-3">AI Thesis</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        STRONG BUY signal for NVDA based on composite analysis. Key factors: Strong bullish price trend, Exceptional revenue growth.
+                    </p>
+                </div>
+                
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="text-lg font-bold mb-3">Key Risks</h3>
+                    <ul class="space-y-2">
+                        
+                        <li class="flex items-center gap-2 text-sm text-slate-600">
+                            <span class="w-2 h-2 bg-rose-500 rounded-full"></span> Market Volatility
+                        </li>
+                        
+                        <li class="flex items-center gap-2 text-sm text-slate-600">
+                            <span class="w-2 h-2 bg-rose-500 rounded-full"></span> Macroeconomic factors
+                        </li>
+                        
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Middle/Right Column: Charts & Technicals -->
+            <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="text-lg font-bold mb-4">Technical Indicators</h3>
+                    <div class="space-y-4">
+                        
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-medium text-slate-500">RSI</span>
+                            <span class="text-sm font-bold text-amber-500">
+                                62.5 (Neutral)
+                            </span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-medium text-slate-500">MACD</span>
+                            <span class="text-sm font-bold text-emerald-500">
+                                12.4 (Bullish)
+                            </span>
+                        </div>
+                        
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="text-lg font-bold mb-4">Fundamentals</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-medium text-slate-500">P/E Ratio</span>
+                            <span class="text-sm font-bold text-slate-700">72.4x</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-medium text-slate-500">Revenue Growth</span>
+                            <span class="text-sm font-bold text-emerald-500">265.0%</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-medium text-slate-500">Net Margin</span>
+                            <span class="text-sm font-bold text-emerald-500">N/A</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 md:col-span-2 h-64 flex flex-col items-center justify-center border-dashed border-2">
+                    <span class="text-slate-400 font-medium">Interactive Price Chart Placeholder</span>
+                    <span class="text-slate-300 text-xs">Integrate with TradingView or Chart.js</span>
+                </div>
+            </div>
+
+        </div>
+    </main>
+    <footer class="text-center p-8 text-slate-400 text-sm">
+        Generated on 2026-04-30 23:25:43 by TradeVision AI
+    </footer>
+</body>
+</html>
