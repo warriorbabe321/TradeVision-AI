@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradeVision AI - Market Intelligence</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .market-card { transition: all 0.2s ease; }
+        .market-card:hover { transform: translateY(-2px); }
+        .toggle-btn.active { background-color: #4f46e5; color: white; border-color: #4f46e5; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col">
+    <!-- Market Pulse Header -->
+    <header class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-8">
+                    <h1 class="text-xl font-black text-indigo-600 italic tracking-tighter">TRADEVISION AI</h1>
+                    <div class="hidden md:flex items-center gap-6 border-l border-slate-200 pl-8">
+                        {% for p in pulse %}
+                        <div class="flex flex-col">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ p.ticker }}</span>
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-sm">${{ p.price }}</span>
+                                <span class="{% if p.percent >= 0 %}text-emerald-500{% else %}text-rose-500{% endif %} text-xs font-bold">
+                                    {{ '+' if p.percent > 0 }}{{ p.percent }}%
+                                </span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <div class="flex flex-col border-l border-slate-100 pl-6">
+                            <span class="text-[8px] font-black text-slate-300 uppercase tracking-widest">Last Sync</span>
+                            <span class="text-[10px] font-bold text-slate-400">{{ health.last_updated }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-2 mr-4 bg-slate-50 px-3 py-1.5 rounded-full border border-slate-100">
+                        <div class="w-2 h-2 rounded-full bg-{{ health.color }}-500 animate-pulse"></div>
+                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-500">System: {{ health.status }}</span>
+                    </div>
+                    <a href="/safety_scanner" class="text-slate-500 font-bold text-sm hover:text-indigo-600 transition">Scanner</a>
+                    <a href="/performance" class="text-slate-500 font-bold text-sm hover:text-indigo-600 transition">Performance</a>
+                    <button class="text-slate-500 font-bold text-sm hover:text-indigo-600 transition">Watchlist</button>
+                    <a href="/logout" class="bg-slate-900 text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-slate-800 transition">Sign Out</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <!-- Hero & Search Section -->
+        <section class="max-w-5xl mx-auto px-4 pt-16 pb-20 text-center">
+            <h2 class="text-6xl font-black mb-6 text-slate-900 tracking-tight leading-[1.1]">
+                Superior Intelligence for <br/> <span class="text-indigo-600">Smarter Investing.</span>
+            </h2>
+            <p class="text-xl text-slate-500 mb-12 max-w-2xl mx-auto leading-relaxed">
+                Advanced technical and fundamental analysis at your fingertips. 
+                Enter a ticker to generate your AI-powered report.
+            </p>
+
+            <form action="/analyze" method="post" id="analysis-form">
+                <input type="hidden" name="risk" id="risk-input" value="Standard">
+                <input type="hidden" name="horizon" id="horizon-input" value="Short Term">
+
+                <!-- Control Bar (Toggles) -->
+                <div class="flex flex-wrap items-center justify-center gap-8 mb-8">
+                    <div class="flex flex-col items-center gap-2">
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Risk Profile</span>
+                        <div class="bg-white border border-slate-200 p-1 rounded-xl flex shadow-sm">
+                            <button type="button" onclick="setRisk('Standard')" id="btn-risk-standard" 
+                                class="risk-btn active px-4 py-1.5 rounded-lg text-sm font-bold transition">Standard</button>
+                            <button type="button" onclick="setRisk('Conservative')" id="btn-risk-conservative"
+                                class="risk-btn px-4 py-1.5 rounded-lg text-sm font-bold text-slate-500 hover:bg-slate-50 transition">Conservative</button>
+                            <button type="button" onclick="setRisk('Sure-Win')" id="btn-risk-sure-win"
+                                class="risk-btn px-4 py-1.5 rounded-lg text-sm font-bold text-slate-500 hover:bg-slate-50 transition">Retailer Gold / Sure-Win</button>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-center gap-2">
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Time Horizon</span>
+                        <div class="bg-white border border-slate-200 p-1 rounded-xl flex shadow-sm">
+                            <button type="button" onclick="setHorizon('Day Trade')" id="btn-horizon-day"
+                                class="horizon-btn px-4 py-1.5 rounded-lg text-sm font-bold text-slate-500 hover:bg-slate-50 transition">Day</button>
+                            <button type="button" onclick="setHorizon('Short Term')" id="btn-horizon-short"
+                                class="horizon-btn active px-4 py-1.5 rounded-lg text-sm font-bold transition">Short</button>
+                            <button type="button" onclick="setHorizon('Long Term')" id="btn-horizon-long"
+                                class="horizon-btn px-4 py-1.5 rounded-lg text-sm font-bold text-slate-500 hover:bg-slate-50 transition">Long</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Central Search Bar -->
+                <div class="relative max-w-3xl mx-auto group">
+                    <div class="absolute inset-y-0 left-6 flex items-center pointer-events-none">
+                        <svg class="h-6 w-6 text-slate-400 group-focus-within:text-indigo-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
+                    <input type="text" name="ticker" placeholder="Search ticker (e.g. NVDA, MSFT, AAPL)" required
+                        class="w-full pl-16 pr-44 py-6 rounded-3xl border-2 border-slate-200 shadow-xl focus:border-indigo-500 focus:outline-none text-xl font-medium transition-all group-hover:border-slate-300">
+                    <button type="submit" 
+                        class="absolute right-3 top-3 bottom-3 bg-indigo-600 text-white px-8 rounded-2xl font-black text-lg hover:bg-indigo-700 transition shadow-lg shadow-indigo-200 active:scale-95">
+                        Analyze
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- New Core Feature: Safety Scanner Section -->
+        <section class="bg-white border-y border-slate-200 py-16">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex items-center justify-between mb-10">
+                    <div>
+                        <h3 class="text-3xl font-black text-slate-900 tracking-tight">Safety Scanner</h3>
+                        <p class="text-slate-500 font-medium">Real-time risk assessment for the top market movers.</p>
+                    </div>
+                    <a href="/safety_scanner" class="bg-emerald-500 text-white px-6 py-3 rounded-2xl font-black text-sm hover:bg-emerald-600 transition shadow-lg shadow-emerald-100 flex items-center gap-2">
+                        Run Full Scanner &rarr;
+                    </a>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Scanner Card 1 -->
+                    <div class="p-6 rounded-3xl border-2 border-emerald-100 bg-emerald-50/30 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-start mb-4">
+                                <span class="text-2xl font-black text-slate-800 uppercase">AAPL</span>
+                                <span class="bg-emerald-500 text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">Very Safe</span>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex justify-between text-xs font-bold">
+                                    <span class="text-slate-400 uppercase">Volatility Risk</span>
+                                    <span class="text-emerald-600 text-sm">LOW (12%)</span>
+                                </div>
+                                <div class="flex justify-between text-xs font-bold">
+                                    <span class="text-slate-400 uppercase">Liquidity Score</span>
+                                    <span class="text-emerald-600 text-sm">98/100</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="mt-6 text-xs text-slate-500 leading-relaxed font-medium">Strong balance sheet and consistent institutional backing make this a stable play for conservative portfolios.</p>
+                    </div>
+
+                    <!-- Scanner Card 2 -->
+                    <div class="p-6 rounded-3xl border-2 border-rose-100 bg-rose-50/30 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-start mb-4">
+                                <span class="text-2xl font-black text-slate-800 uppercase">TSLA</span>
+                                <span class="bg-rose-500 text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">High Risk</span>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex justify-between text-xs font-bold">
+                                    <span class="text-slate-400 uppercase">Volatility Risk</span>
+                                    <span class="text-rose-600 text-sm">HIGH (64%)</span>
+                                </div>
+                                <div class="flex justify-between text-xs font-bold">
+                                    <span class="text-slate-400 uppercase">Trend Strength</span>
+                                    <span class="text-rose-600 text-sm">Weakening</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="mt-6 text-xs text-slate-500 leading-relaxed font-medium">Elevated volatility and negative sentiment indicators suggest caution. Not recommended for standard risk tolerance.</p>
+                    </div>
+
+                    <!-- Scanner Card 3 -->
+                    <div class="p-6 rounded-3xl border-2 border-indigo-100 bg-indigo-50/30 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-start mb-4">
+                                <span class="text-2xl font-black text-slate-800 uppercase">NVDA</span>
+                                <span class="bg-indigo-600 text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">Growth Star</span>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex justify-between text-xs font-bold">
+                                    <span class="text-slate-400 uppercase">Performance (1Y)</span>
+                                    <span class="text-indigo-600 text-sm">+265.4%</span>
+                                </div>
+                                <div class="flex justify-between text-xs font-bold">
+                                    <span class="text-slate-400 uppercase">Momentum</span>
+                                    <span class="text-indigo-600 text-sm">Extreme Bullish</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="mt-6 text-xs text-slate-500 leading-relaxed font-medium">Exceptional growth trajectory. While safe fundamentally, entry point timing is critical due to momentum levels.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recent Reports Section -->
+        <section class="max-w-7xl mx-auto px-4 py-16">
+            <h3 class="text-slate-800 font-black text-2xl mb-8 flex items-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Recently Analyzed
+            </h3>
+            <div class="grid grid-cols-2 md:grid-cols-6 gap-6">
+                {% if reports %}
+                    {% for report in reports %}
+                    <a href="/reports/{{ report.filename }}" class="market-card p-6 bg-white border border-slate-200 rounded-3xl hover:border-indigo-500 hover:shadow-xl transition-all cursor-pointer text-center group">
+                        <span class="block font-black text-2xl text-slate-800 group-hover:text-indigo-600 transition mb-1 uppercase">{{ report.ticker }}</span>
+                        <span class="text-[10px] text-slate-400 uppercase font-black tracking-widest">View Report</span>
+                    </a>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-slate-400 text-sm font-medium col-span-full">No recent reports found.</p>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer with Disclaimer -->
+    <footer class="bg-white border-t border-slate-200 pt-16 pb-10">
+        <div class="max-w-4xl mx-auto px-4">
+            <div class="bg-slate-50 border border-slate-200 p-10 rounded-[40px] text-left mb-16">
+                <h3 class="text-slate-800 font-black text-xl mb-4 flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Legal Disclosure
+                </h3>
+                <p class="text-slate-500 text-sm leading-relaxed font-medium">
+                    TradeVision AI is an automated analysis tool designed for educational and research purposes only. The information provided does not constitute financial, investment, or legal advice. Stock market investing carries significant risk. Always perform your own due diligence or consult with a licensed financial advisor before making any investment decisions. We do not guarantee the accuracy or completeness of the data provided.
+                </p>
+            </div>
+            <div class="text-center text-slate-400 text-[10px] font-black uppercase tracking-[0.2em]">
+                © 2024 TradeVision AI. Engineered for Professionals.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function setRisk(val) {
+            document.getElementById('risk-input').value = val;
+            document.querySelectorAll('.risk-btn').forEach(btn => {
+                btn.classList.remove('active', 'text-white');
+                btn.classList.add('text-slate-500', 'hover:bg-slate-50');
+                btn.style.backgroundColor = '';
+            });
+            const activeBtn = document.getElementById('btn-risk-' + val.toLowerCase());
+            activeBtn.classList.add('active');
+            activeBtn.classList.remove('text-slate-500', 'hover:bg-slate-50');
+        }
+
+        function setHorizon(val) {
+            document.getElementById('horizon-input').value = val;
+            document.querySelectorAll('.horizon-btn').forEach(btn => {
+                btn.classList.remove('active', 'text-white');
+                btn.classList.add('text-slate-500', 'hover:bg-slate-50');
+                btn.style.backgroundColor = '';
+            });
+            const activeBtn = document.getElementById('btn-horizon-' + val.split(' ')[0].toLowerCase());
+            activeBtn.classList.add('active');
+            activeBtn.classList.remove('text-slate-500', 'hover:bg-slate-50');
+        }
+    </script>
+</body>
+</html>
