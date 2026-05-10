@@ -60,8 +60,8 @@ def analyze_stock(ticker, risk_level="Standard", horizon="Short Term"):
     vwap = calculate_vwap(hist_data).iloc[-1]
     obv = calculate_obv(hist_data).iloc[-1]
     rvol = calculate_rvol(hist_data).iloc[-1]
-    is_hammer = identify_hammer(hist_data).iloc[-1]
-    is_doji = identify_doji(hist_data).iloc[-1]
+    is_hammer = bool(identify_hammer(hist_data).iloc[-1])
+    is_doji = bool(identify_doji(hist_data).iloc[-1])
 
     current_price = quote['price']
     
@@ -149,7 +149,7 @@ def analyze_stock(ticker, risk_level="Standard", horizon="Short Term"):
         
         hc_verdict = "AVOID / NOT PICKY ENOUGH"
         if passes_filters:
-            is_perfect = (current_price > sma20 > sma50 > sma200)
+            is_perfect = bool(current_price > sma20 > sma50 > sma200)
             if hc_score >= 95 and is_perfect: 
                 hc_verdict = "SURE-WIN / RETAIL GOLD"
                 try:
@@ -204,6 +204,10 @@ def analyze_stock(ticker, risk_level="Standard", horizon="Short Term"):
         touches_50 = row['Low'] <= s50 <= row['High'] if not pd.isna(s50) else False
         buy_dip = bool(is_uptrend and (touches_20 or touches_50))
 
+        # Caution/Reject logic
+        caution = bool(close_val < s20) if not pd.isna(s20) else False
+        reject = bool(close_val < s50 or close_val < s200) if not (pd.isna(s50) or pd.isna(s200)) else False
+
         chart_data.append({
             "time": date.strftime('%Y-%m-%d'),
             "open": round(row['Open'], 2),
@@ -217,6 +221,8 @@ def analyze_stock(ticker, risk_level="Standard", horizon="Short Term"):
             "sma200": round(s200, 2) if not pd.isna(s200) else None,
             "golden_zone": is_golden,
             "buy_dip": buy_dip,
+            "caution": caution,
+            "reject": reject,
             "rsi": round(rsi_hist.iloc[i], 2) if not pd.isna(rsi_hist.iloc[i]) else None,
             "macd": round(macd_line_hist.iloc[i], 2) if not pd.isna(macd_line_hist.iloc[i]) else None,
             "macd_signal": round(signal_line_hist.iloc[i], 2) if not pd.isna(signal_line_hist.iloc[i]) else None,

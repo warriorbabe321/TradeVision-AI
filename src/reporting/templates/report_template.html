@@ -430,15 +430,49 @@
                             })));
 
                             // Buy Dip Markers
-                            const markers = chartData
-                                .filter(d => d.buy_dip)
-                                .map(d => ({
-                                    time: d.time,
-                                    position: 'belowBar',
-                                    color: '#10b981',
-                                    shape: 'arrowUp',
-                                    text: 'BUY DIP'
-                                }));
+                            const markers = [];
+                            
+                            chartData.forEach((d, i) => {
+                                if (d.buy_dip) {
+                                    markers.push({
+                                        time: d.time,
+                                        position: 'belowBar',
+                                        color: '#10b981',
+                                        shape: 'arrowUp',
+                                        text: 'BUY DIP'
+                                    });
+                                }
+                                
+                                if (d.reject) {
+                                    markers.push({
+                                        time: d.time,
+                                        position: 'aboveBar',
+                                        color: '#ef4444',
+                                        shape: 'circle',
+                                        text: 'REJECT'
+                                    });
+                                } else if (d.caution) {
+                                    markers.push({
+                                        time: d.time,
+                                        position: 'aboveBar',
+                                        color: '#f59e0b',
+                                        shape: 'circle',
+                                        text: 'CAUTION'
+                                    });
+                                }
+                                
+                                // Gold Star on last candle if Retail Gold
+                                if (i === chartData.length - 1 && "{{ signal }}" === "SURE-WIN / RETAIL GOLD") {
+                                    markers.push({
+                                        time: d.time,
+                                        position: 'aboveBar',
+                                        color: '#fbbf24',
+                                        shape: 'star',
+                                        text: 'RETAIL GOLD'
+                                    });
+                                }
+                            });
+                            
                             candlestickSeries.setMarkers(markers);
 
                             // Bollinger Bands
