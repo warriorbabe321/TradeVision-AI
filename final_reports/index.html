@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradeVision AI - Stock Analysis Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+    <div class="max-w-4xl mx-auto py-12 px-4">
+        <header class="mb-12 text-center">
+            <h1 class="text-4xl font-bold text-slate-900 mb-2">TradeVision AI</h1>
+            <p class="text-slate-600 italic">"Superior US Stock Market Analysis for Decision Making"</p>
+        </header>
+
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 mb-8">
+            <h2 class="text-xl font-semibold mb-6 flex items-center">
+                <span class="bg-indigo-100 text-indigo-600 p-2 rounded-lg mr-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                </span>
+                Ready-to-View Reports
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <a href="MSFT_report.html" class="block p-4 border border-slate-100 rounded-xl hover:bg-indigo-50 hover:border-indigo-200 transition-all group">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <span class="font-bold text-lg">MSFT</span>
+                            <p class="text-sm text-slate-500">Microsoft Corp.</p>
+                        </div>
+                        <span class="text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">View Analysis →</span>
+                    </div>
+                </a>
+                
+                <a href="GOOGL_report.html" class="block p-4 border border-slate-100 rounded-xl hover:bg-indigo-50 hover:border-indigo-200 transition-all group">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <span class="font-bold text-lg">GOOGL</span>
+                            <p class="text-sm text-slate-500">Alphabet Inc.</p>
+                        </div>
+                        <span class="text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">View Analysis →</span>
+                    </div>
+                </a>
+
+                <a href="NVDA_report.html" class="block p-4 border border-slate-100 rounded-xl hover:bg-indigo-50 hover:border-indigo-200 transition-all group">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <span class="font-bold text-lg">NVDA</span>
+                            <p class="text-sm text-slate-500">NVIDIA Corp.</p>
+                        </div>
+                        <span class="text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">View Analysis →</span>
+                    </div>
+                </a>
+
+                <a href="TSLA_report.html" class="block p-4 border border-slate-100 rounded-xl hover:bg-indigo-50 hover:border-indigo-200 transition-all group">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <span class="font-bold text-lg">TSLA</span>
+                            <p class="text-sm text-slate-500">Tesla, Inc.</p>
+                        </div>
+                        <span class="text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">View Analysis →</span>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <section class="bg-indigo-600 rounded-2xl shadow-lg p-8 text-white">
+            <h2 class="text-xl font-semibold mb-4">Analyze a New Stock</h2>
+            <p class="mb-6 text-indigo-100">You don't need to touch any code. Just tell me (the AI Lead) which ticker you want to analyze in the chat, and I'll have the team generate it for you instantly.</p>
+            <div class="flex items-center space-x-2 text-sm bg-indigo-700 p-3 rounded-lg border border-indigo-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>Try asking: "Analyze Apple for me" or "Run a report for Amazon"</span>
+            </div>
+        </section>
+
+        <footer class="mt-12 text-center text-slate-400 text-xs">
+            &copy; 2026 Ai Personal US Stock Buy/Sell analysis Team
+        </footer>
+    </div>
+</body>
+</html>

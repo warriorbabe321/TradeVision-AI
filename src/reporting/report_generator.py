@@ -118,10 +118,13 @@ def generate_reports(analysis_data_path, output_dir):
     print(f"HTML report generated: {html_file_path}")
 
 if __name__ == "__main__":
+    # Use relative paths from current file location
+    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    
     # Path to the mock analysis data (now matching engine format)
-    mock_data_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "mock_analysis.json")
+    mock_data_path = os.path.join(project_root, "mock_analysis.json")
     
-    # Path to save generated reports
-    shared_reports_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "reports")
+    # Path to save generated reports (relative to project root)
+    reports_dir = os.path.join(project_root, "reports")
     
-    generate_reports(mock_data_path, shared_reports_dir)
+    generate_reports(mock_data_path, reports_dir)

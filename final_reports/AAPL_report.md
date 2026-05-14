@@ -1,5 +1,5 @@
 # Stock Analysis: AAPL - Apple Inc.
-**Date:** 2026-05-09 21:12:05
+**Date:** 2026-05-03 16:30:59
 **Signal:** BUY (71%)
 
 ---
@@ -8,23 +8,23 @@
 BUY signal for AAPL based on composite analysis. Key factors: Strong bullish price trend, Exceptional revenue growth.
 
 ## Market Stats
-- **Current Price:** $293.32
-- **Daily Change:** 5.9 (2.05%)
+- **Current Price:** $280.14
+- **Daily Change:** 8.79 (3.24%)
 
 ## Technical Analysis
 | Indicator | Value | Status |
 |-----------|-------|--------|
-| RSI | 68.94 | Neutral |
-| MACD | 7.3 | Bullish |
-| BB_UPPER | 291.86 | N/A |
-| BB_LOWER | 254.56 | N/A |
-| ATR | 6.92 | N/A |
-| VWAP | 244.35 | N/A |
-| OBV | 1182971000.0 | N/A |
+| RSI | 69.31 | Neutral |
+| MACD | 4.36 | Bullish |
+| BB_UPPER | 280.06 | N/A |
+| BB_LOWER | 252.66 | N/A |
+| ATR | 6.77 | N/A |
+| VWAP | 242.32 | N/A |
+| OBV | 1012675000.0 | N/A |
 
 
 ## Fundamental Health
-- **P/E Ratio:** 35.47x
+- **P/E Ratio:** 33.92x
 - **Revenue Growth:** 16.6%
 - **Net Margin:** 27.15%
 

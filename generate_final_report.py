@@ -22,7 +22,9 @@ def main():
     args = parser.parse_args()
 
     ticker = args.ticker.upper()
-    output_dir = os.path.join(os.path.dirname(__file__), "final_reports")
+    # Use relative path from current file location
+    project_root = os.path.dirname(os.path.abspath(__file__))
+    output_dir = os.path.join(project_root, "final_reports")
     temp_json_path = f"/tmp/{ticker}_analysis.json"
 
     try:

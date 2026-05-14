@@ -60,8 +60,8 @@ def analyze_stock(ticker, risk_level="Standard", horizon="Short Term"):
     vwap = calculate_vwap(hist_data).iloc[-1]
     obv = calculate_obv(hist_data).iloc[-1]
     rvol = calculate_rvol(hist_data).iloc[-1]
-    is_hammer = bool(identify_hammer(hist_data).iloc[-1])
-    is_doji = bool(identify_doji(hist_data).iloc[-1])
+    is_hammer = identify_hammer(hist_data).iloc[-1]
+    is_doji = identify_doji(hist_data).iloc[-1]
 
     current_price = quote['price']
     
@@ -149,7 +149,7 @@ def analyze_stock(ticker, risk_level="Standard", horizon="Short Term"):
         
         hc_verdict = "AVOID / NOT PICKY ENOUGH"
         if passes_filters:
-            is_perfect = bool(current_price > sma20 > sma50 > sma200)
+            is_perfect = (current_price > sma20 > sma50 > sma200)
             if hc_score >= 95 and is_perfect: 
                 hc_verdict = "SURE-WIN / RETAIL GOLD"
                 try:
@@ -187,27 +187,8 @@ def analyze_stock(ticker, risk_level="Standard", horizon="Short Term"):
     mfi_hist = calculate_mfi(hist_data)
     vwap_hist = calculate_vwap(hist_data)
     atr_hist = calculate_atr(hist_data)
-    vol_sma20 = hist_data['Volume'].rolling(window=20).mean()
 
     for i, (date, row) in enumerate(hist_data.iterrows()):
-        close_val = row['Close']
-        s20 = sma20_hist.iloc[i]
-        s50 = sma50_hist.iloc[i]
-        s200 = sma200_hist.iloc[i]
-        
-        is_golden = False
-        if not (pd.isna(s20) or pd.isna(s50) or pd.isna(s200)):
-            is_golden = bool(close_val > s20 > s50 > s200)
-            
-        is_uptrend = s50 > s200 if not (pd.isna(s50) or pd.isna(s200)) else False
-        touches_20 = row['Low'] <= s20 <= row['High'] if not pd.isna(s20) else False
-        touches_50 = row['Low'] <= s50 <= row['High'] if not pd.isna(s50) else False
-        buy_dip = bool(is_uptrend and (touches_20 or touches_50))
-
-        # Caution/Reject logic
-        caution = bool(close_val < s20) if not pd.isna(s20) else False
-        reject = bool(close_val < s50 or close_val < s200) if not (pd.isna(s50) or pd.isna(s200)) else False
-
         chart_data.append({
             "time": date.strftime('%Y-%m-%d'),
             "open": round(row['Open'], 2),
@@ -215,14 +196,9 @@ def analyze_stock(ticker, risk_level="Standard", horizon="Short Term"):
             "low": round(row['Low'], 2),
             "close": round(row['Close'], 2),
             "volume": int(row['Volume']),
-            "vol_sma20": round(vol_sma20.iloc[i], 0) if not pd.isna(vol_sma20.iloc[i]) else None,
-            "sma20": round(s20, 2) if not pd.isna(s20) else None,
-            "sma50": round(s50, 2) if not pd.isna(s50) else None,
-            "sma200": round(s200, 2) if not pd.isna(s200) else None,
-            "golden_zone": is_golden,
-            "buy_dip": buy_dip,
-            "caution": caution,
-            "reject": reject,
+            "sma20": round(sma20_hist.iloc[i], 2) if not pd.isna(sma20_hist.iloc[i]) else None,
+            "sma50": round(sma50_hist.iloc[i], 2) if not pd.isna(sma50_hist.iloc[i]) else None,
+            "sma200": round(sma200_hist.iloc[i], 2) if not pd.isna(sma200_hist.iloc[i]) else None,
             "rsi": round(rsi_hist.iloc[i], 2) if not pd.isna(rsi_hist.iloc[i]) else None,
             "macd": round(macd_line_hist.iloc[i], 2) if not pd.isna(macd_line_hist.iloc[i]) else None,
             "macd_signal": round(signal_line_hist.iloc[i], 2) if not pd.isna(signal_line_hist.iloc[i]) else None,
