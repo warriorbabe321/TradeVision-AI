@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Analysis - TradeVision AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
     <style>
         /* Golden Zone: Highlight when Price > 20 > 50 > 200 SMA */
         .golden-zone-bg {
@@ -15,11 +14,6 @@
         .golden-zone-badge {
             background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
             box-shadow: 0 4px 20px rgba(245, 158, 11, 0.4);
-        }
-        /* RSI Healthy Bullish Zone (50-70) */
-        .rsi-healthy-zone {
-            background: rgba(16, 185, 129, 0.1);
-            border-color: rgba(16, 185, 129, 0.3);
         }
     </style>
 </head>
@@ -55,195 +49,64 @@
             </div>
         </div>
 
-        <!-- The Chart Section -->
-        <div class="bg-white p-6 rounded-[40px] shadow-2xl border border-slate-200 mb-10 {% if stock.alignment == 'PERFECT' %}golden-zone-bg border-amber-200{% endif %}">
+        <!-- TradingView Advanced Real-Time Chart Widget -->
+        <div id="chart-card" class="bg-white p-6 rounded-[40px] shadow-2xl border border-slate-200 mb-10 {% if stock.alignment == 'PERFECT' %}golden-zone-bg border-amber-200{% endif %}">
             <div class="flex justify-between items-center mb-6 px-4">
                 <div class="flex items-center gap-3">
-                    <h3 class="font-black text-slate-800 uppercase tracking-tight">Interactive Price Action (100D)</h3>
+                    <h3 class="font-black text-slate-800 uppercase tracking-tight">Official Real-Time Market Chart</h3>
                     {% if stock.alignment == 'PERFECT' %}
                     <span class="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">Golden Zone Active</span>
                     {% endif %}
                 </div>
-                <div class="flex gap-4">
-                    <span class="flex items-center gap-1 text-[10px] font-black text-blue-500"><div class="w-3 h-0.5 bg-blue-500"></div> SMA20</span>
-                    <span class="flex items-center gap-1 text-[10px] font-black text-orange-500"><div class="w-3 h-1 bg-orange-500"></div> SMA50</span>
-                    <span class="flex items-center gap-1 text-[10px] font-black text-purple-500"><div class="w-3 h-1.5 bg-purple-500"></div> SMA200</span>
-                </div>
             </div>
-            <div id="chart" style="height: 500px;"></div>
+            
+            <!-- TradingView Widget BEGIN -->
+            <div class="tradingview-widget-container" style="height: 600px;">
+                <div id="tradingview_78a1a" style="height: 100%;"></div>
+                <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+                <script type="text/javascript">
+                new TradingView.widget(
+                {
+                    "autosize": true,
+                    "symbol": "{{ stock.ticker }}",
+                    "interval": "D",
+                    "timezone": "Etc/UTC",
+                    "theme": "light",
+                    "style": "1",
+                    "locale": "en",
+                    "toolbar_bg": "#f1f3f6",
+                    "enable_publishing": false,
+                    "withdateranges": true,
+                    "hide_side_toolbar": false,
+                    "allow_symbol_change": true,
+                    "details": true,
+                    "hotlist": true,
+                    "calendar": true,
+                    "show_popup_button": true,
+                    "popup_width": "1000",
+                    "popup_height": "650",
+                    "container_id": "tradingview_78a1a"
+                });
+                </script>
+            </div>
+            <!-- TradingView Widget END -->
         </div>
 
-        <!-- RSI and MACD Section -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
-            <!-- RSI Pane -->
-            <div class="bg-white p-6 rounded-[40px] shadow-2xl border border-slate-200">
-                <div class="flex justify-between items-center mb-4 px-2">
-                    <h3 class="font-black text-slate-800 uppercase text-sm tracking-tight">RSI (14)</h3>
-                    <span id="rsi-value" class="text-lg font-black text-slate-600">--</span>
-                </div>
-                <div id="rsi-chart" style="height: 150px;"></div>
-                <!-- RSI 50-70 Healthy Zone Reference -->
-                <div class="flex justify-center gap-4 mt-3">
-                    <span class="flex items-center gap-1 text-[10px] font-bold text-slate-400">
-                        <div class="w-3 h-3 rounded bg-emerald-100 border border-emerald-300"></div> 30 Oversold
-                    </span>
-                    <span class="flex items-center gap-1 text-[10px] font-bold text-emerald-600">
-                        <div class="w-3 h-3 rounded bg-emerald-200 border border-emerald-400"></div> 50-70 Healthy Bullish
-                    </span>
-                    <span class="flex items-center gap-1 text-[10px] font-bold text-slate-400">
-                        <div class="w-3 h-3 rounded bg-rose-100 border border-rose-300"></div> 70 Overbought
-                    </span>
-                </div>
+            <div class="bg-white p-8 rounded-[40px] border border-slate-200 shadow-sm">
+                 <h4 class="font-black text-slate-800 uppercase text-xs tracking-widest mb-4">Alignment Logic</h4>
+                 <p class="text-sm text-slate-500 leading-relaxed">
+                    Golden Zone is triggered when Price is above the 20, 50, and 200 Moving Averages in "Perfect Alignment".
+                 </p>
             </div>
-
-            <!-- MACD Pane -->
-            <div class="bg-white p-6 rounded-[40px] shadow-2xl border border-slate-200">
-                <div class="flex justify-between items-center mb-4 px-2">
-                    <h3 class="font-black text-slate-800 uppercase text-sm tracking-tight">MACD (12, 26, 9)</h3>
-                    <span id="macd-value" class="text-lg font-black text-slate-600">--</span>
-                </div>
-                <div id="macd-chart" style="height: 150px;"></div>
-                <div class="flex justify-center gap-4 mt-3">
-                    <span class="flex items-center gap-1 text-[10px] font-bold text-emerald-600">
-                        <div class="w-3 h-3 rounded bg-emerald-200"></div> Bullish Cross
-                    </span>
-                    <span class="flex items-center gap-1 text-[10px] font-bold text-rose-600">
-                        <div class="w-3 h-3 rounded bg-rose-200"></div> Bearish Cross
-                    </span>
-                </div>
+            <div class="bg-white p-8 rounded-[40px] border border-slate-200 shadow-sm">
+                 <h4 class="font-black text-slate-800 uppercase text-xs tracking-widest mb-4">Fundamental Moat</h4>
+                 <p class="text-sm text-slate-500 leading-relaxed">
+                    Retail Gold status requires a Safety Score > 70, calculated based on Debt-to-Equity, Net Margin, and Operating Cash Flow.
+                 </p>
             </div>
-        </div>
-
-        <!-- Volume Pane -->
-        <div class="bg-white p-6 rounded-[40px] shadow-2xl border border-slate-200">
-            <div class="flex justify-between items-center mb-4 px-2">
-                <h3 class="font-black text-slate-800 uppercase text-sm tracking-tight">Volume</h3>
-                <div class="flex items-center gap-3">
-                    <span class="flex items-center gap-1 text-[10px] font-bold text-emerald-500">
-                        <div class="w-3 h-3 rounded bg-emerald-400"></div> Institutional Buying
-                    </span>
-                    <span class="flex items-center gap-1 text-[10px] font-bold text-slate-400">
-                        <div class="w-3 h-3 rounded bg-slate-300"></div> Normal
-                    </span>
-                </div>
-            </div>
-            <div id="volume-chart" style="height: 120px;"></div>
         </div>
         {% endfor %}
     </div>
-
-    <script>
-        const chartData = {{ chart_data | tojson }};
-        
-        if (chartData && chartData.length > 0) {
-            // Main Price Chart
-            const chart = LightweightCharts.createChart(document.getElementById('chart'), {
-                layout: { backgroundColor: '#ffffff', textColor: '#333' },
-                grid: { vertLines: { color: '#f0f0f0' }, horzLines: { color: '#f0f0f0' } },
-                crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
-                timeScale: { borderColor: '#f0f0f0' }
-            });
-
-            const candleSeries = chart.addCandlestickSeries();
-            candleSeries.setData(chartData.map(d => ({
-                time: d.time, open: d.open, high: d.high, low: d.low, close: d.close
-            })));
-
-            // SMA 20 - Blue (Thin line as per critical_indicators.md)
-            const s20 = chart.addLineSeries({ color: '#3b82f6', lineWidth: 1 });
-            s20.setData(chartData.filter(d => d.sma20).map(d => ({ time: d.time, value: d.sma20 })));
-
-            // SMA 50 - Orange (Medium line)
-            const s50 = chart.addLineSeries({ color: '#f97316', lineWidth: 2 });
-            s50.setData(chartData.filter(d => d.sma50).map(d => ({ time: d.time, value: d.sma50 })));
-
-            // SMA 200 - Purple (Thick line)
-            const s200 = chart.addLineSeries({ color: '#8b5cf6', lineWidth: 3 });
-            s200.setData(chartData.filter(d => d.sma200).map(d => ({ time: d.time, value: d.sma200 })));
-
-            chart.timeScale().fitContent();
-
-            // RSI Chart
-            const rsiChart = LightweightCharts.createChart(document.getElementById('rsi-chart'), {
-                layout: { backgroundColor: 'transparent', textColor: '#333' },
-                grid: { vertLines: { color: '#f0f0f0' }, horzLines: { color: '#f0f0f0' } },
-                timeScale: { borderColor: '#f0f0f0' },
-                height: 150,
-                width: document.getElementById('rsi-chart').offsetWidth
-            });
-            const rsiSeries = rsiChart.addLineSeries({ color: '#8b5cf6', lineWidth: 2 });
-            rsiSeries.setData(chartData.filter(d => d.rsi).map(d => ({ time: d.time, value: d.rsi })));
-            rsiChart.timeScale().fitContent();
-            
-            // Update RSI value display
-            const lastRsi = chartData.filter(d => d.rsi).pop();
-            if (lastRsi) {
-                document.getElementById('rsi-value').textContent = lastRsi.rsi.toFixed(1);
-                const rsiVal = parseFloat(lastRsi.rsi);
-                if (rsiVal > 70) {
-                    document.getElementById('rsi-value').classList.add('text-rose-500');
-                } else if (rsiVal < 30) {
-                    document.getElementById('rsi-value').classList.add('text-emerald-500');
-                } else if (rsiVal >= 50 && rsiVal <= 70) {
-                    document.getElementById('rsi-value').classList.add('text-emerald-500');
-                }
-            }
-
-            // MACD Chart
-            const macdChart = LightweightCharts.createChart(document.getElementById('macd-chart'), {
-                layout: { backgroundColor: 'transparent', textColor: '#333' },
-                grid: { vertLines: { color: '#f0f0f0' }, horzLines: { color: '#f0f0f0' } },
-                timeScale: { borderColor: '#f0f0f0' },
-                height: 150,
-                width: document.getElementById('macd-chart').offsetWidth
-            });
-            
-            // MACD Histogram
-            const macdHistSeries = macdChart.addHistogramSeries({
-                color: '#10b981',
-            });
-            macdHistSeries.setData(chartData.filter(d => d.macd).map(d => ({
-                time: d.time,
-                value: d.macd - (d.macd_signal || 0),
-                color: (d.macd - (d.macd_signal || 0)) >= 0 ? '#10b981' : '#ef4444'
-            })));
-            
-            // MACD Line
-            const macdLineSeries = macdChart.addLineSeries({ color: '#3b82f6', lineWidth: 1 });
-            macdLineSeries.setData(chartData.filter(d => d.macd).map(d => ({ time: d.time, value: d.macd })));
-            
-            // Signal Line
-            const signalSeries = macdChart.addLineSeries({ color: '#f97316', lineWidth: 1 });
-            signalSeries.setData(chartData.filter(d => d.macd_signal).map(d => ({ time: d.time, value: d.macd_signal })));
-            
-            macdChart.timeScale().fitContent();
-            
-            // Update MACD value display
-            const lastMacd = chartData.filter(d => d.macd).pop();
-            if (lastMacd) {
-                const macdDiff = lastMacd.macd - (lastMacd.macd_signal || 0);
-                document.getElementById('macd-value').textContent = macdDiff.toFixed(2);
-                document.getElementById('macd-value').classList.add(macdDiff >= 0 ? 'text-emerald-500' : 'text-rose-500');
-            }
-
-            // Volume Chart
-            const volChart = LightweightCharts.createChart(document.getElementById('volume-chart'), {
-                layout: { backgroundColor: 'transparent', textColor: '#333' },
-                grid: { vertLines: { color: '#f0f0f0' }, horzLines: { color: '#f0f0f0' } },
-                timeScale: { borderColor: '#f0f0f0' },
-                height: 120,
-                width: document.getElementById('volume-chart').offsetWidth
-            });
-            const volSeries = volChart.addHistogramSeries({
-                color: '#94a3b8',
-            });
-            volSeries.setData(chartData.map(d => ({
-                time: d.time,
-                value: d.volume,
-                color: d.close >= d.open ? '#10b981' : '#ef4444'
-            })));
-            volChart.timeScale().fitContent();
-        }
-    </script>
 </body>
 </html>
