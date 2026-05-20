@@ -64,25 +64,6 @@ def analyze():
         # Perfect Alignment Logic (Golden Zone: Price > 20 > 50 > 200)
         is_perfect = current_price > s20 > s50 > s200
         
-        # Chart Data (Last 100 days) - include RSI, MACD, Volume
-        chart_df = hist.tail(100).reset_index()
-        chart_data = []
-        for _, row in chart_df.iterrows():
-            chart_data.append({
-                "time": row['Date'].strftime('%Y-%m-%d'),
-                "open": round(row['Open'], 2),
-                "high": round(row['High'], 2),
-                "low": round(row['Low'], 2),
-                "close": round(row['Close'], 2),
-                "volume": int(row['Volume']),
-                "sma20": round(row['SMA20'], 2) if not pd.isna(row['SMA20']) else None,
-                "sma50": round(row['SMA50'], 2) if not pd.isna(row['SMA50']) else None,
-                "sma200": round(row['SMA200'], 2) if not pd.isna(row['SMA200']) else None,
-                "rsi": round(row['RSI'], 2) if not pd.isna(row['RSI']) else None,
-                "macd": round(row['MACD'], 2) if not pd.isna(row['MACD']) else None,
-                "macd_signal": round(row['MACD_signal'], 2) if not pd.isna(row['MACD_signal']) else None
-            })
-
         info = stock.info
         score = 0
         if info.get('debtToEquity', 100) < 50: score += 40
@@ -101,7 +82,7 @@ def analyze():
             "alignment": "PERFECT" if is_perfect else "UNALIGNED"
         }
         
-        return render_template("scanner.html", stocks=[result], chart_data=chart_data)
+        return render_template("scanner.html", stocks=[result])
     except Exception as e:
         return f"System Busy. Try again in a moment. ({str(e)})"
 
@@ -110,7 +91,7 @@ def analyze():
 def scanner():
     # Example Gold Wins
     stocks = [{"ticker": "BRK-B", "score": 100, "status": "Retail Gold"}, {"ticker": "GOOGL", "score": 85, "status": "Retail Gold"}]
-    return render_template("scanner.html", stocks=stocks, chart_data=[])
+    return render_template("scanner.html", stocks=stocks)
 
 @app.route("/login", methods=["GET", "POST"])
 def login_page():
