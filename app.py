@@ -31,7 +31,7 @@ def dashboard():
 def analyze():
     ticker = request.form.get("ticker").upper()
     try:
-        stock = yf.Ticker(ticker, session=session_requests)
+        stock = yf.Ticker(ticker)
         hist = stock.history(period="1y")
         if hist.empty: return f"No data for {ticker}"
 
@@ -53,7 +53,7 @@ def analyze():
         hist['MACD'] = exp1 - exp2
         hist['MACD_signal'] = hist['MACD'].ewm(span=9, adjust=False).mean()
         
-        current_price = hist['Close'].iloc[-1]
+        current_price = stock.fast_info['lastPrice']
         s20 = hist['SMA20'].iloc[-1]
         s50 = hist['SMA50'].iloc[-1]
         s200 = hist['SMA200'].iloc[-1]
