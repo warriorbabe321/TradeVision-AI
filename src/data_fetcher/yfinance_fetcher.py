@@ -15,11 +15,22 @@ class YFinanceFetcher(DataFetcher):
     def get_real_time_quote(self, ticker: str) -> dict:
         """Fetch real-time stock quote using yfinance."""
         stock = yf.Ticker(ticker)
-        fast = stock.fast_info
         
+        try:
+            fast = stock.fast_info
+        except Exception:
+            fast = {}
+            
         last_price = fast.get('lastPrice')
         prev_close = fast.get('regularMarketPreviousClose') or fast.get('previousClose')
         
+        # Try to get info safely
+        try:
+            info = stock.info
+            if not isinstance(info, dict): info = {}
+        except Exception:
+            info = {}
+            
         change = None
         change_pct = None
         if last_price is not None and prev_close is not None:
@@ -28,7 +39,7 @@ class YFinanceFetcher(DataFetcher):
             
         return {
             "symbol": ticker,
-            "company_name": stock.info.get("longName"),
+            "company_name": info.get("longName") or ticker,
             "price": last_price,
             "change": change,
             "change_percent": change_pct,
@@ -38,7 +49,11 @@ class YFinanceFetcher(DataFetcher):
     def get_fundamentals(self, ticker: str) -> dict:
         """Fetch fundamental data using yfinance."""
         stock = yf.Ticker(ticker)
-        info = stock.info
+        try:
+            info = stock.info
+            if not isinstance(info, dict): info = {}
+        except Exception:
+            info = {}
         
         # Calculate revenue growth if possible, or use yfinance provided one
         rev_growth = info.get("revenueGrowth")
@@ -65,7 +80,11 @@ class YFinanceFetcher(DataFetcher):
     def get_analyst_recommendations(self, ticker: str) -> dict:
         """Fetch analyst recommendations using yfinance."""
         stock = yf.Ticker(ticker)
-        info = stock.info
+        try:
+            info = stock.info
+            if not isinstance(info, dict): info = {}
+        except Exception:
+            info = {}
         return {
             "recommendation_key": info.get("recommendationKey"),
             "recommendation_mean": info.get("recommendationMean"),
