@@ -15,14 +15,24 @@ class YFinanceFetcher(DataFetcher):
     def get_real_time_quote(self, ticker: str) -> dict:
         """Fetch real-time stock quote using yfinance."""
         stock = yf.Ticker(ticker)
-        info = stock.info
+        fast = stock.fast_info
+        
+        last_price = fast.get('lastPrice')
+        prev_close = fast.get('regularMarketPreviousClose') or fast.get('previousClose')
+        
+        change = None
+        change_pct = None
+        if last_price is not None and prev_close is not None:
+            change = last_price - prev_close
+            change_pct = (change / prev_close) if prev_close else 0
+            
         return {
             "symbol": ticker,
-            "company_name": info.get("longName"),
-            "price": info.get("regularMarketPrice") or info.get("currentPrice"),
-            "change": info.get("regularMarketChange"),
-            "change_percent": info.get("regularMarketChangePercent"),
-            "volume": info.get("regularMarketVolume"),
+            "company_name": stock.info.get("longName"),
+            "price": last_price,
+            "change": change,
+            "change_percent": change_pct,
+            "volume": fast.get('lastVolume'),
         }
 
     def get_fundamentals(self, ticker: str) -> dict:

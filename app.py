@@ -53,30 +53,43 @@ def analyze():
         hist['MACD'] = exp1 - exp2
         hist['MACD_signal'] = hist['MACD'].ewm(span=9, adjust=False).mean()
         
-        current_price = stock.fast_info['lastPrice']
-        s20 = hist['SMA20'].iloc[-1]
-        s50 = hist['SMA50'].iloc[-1]
-        s200 = hist['SMA200'].iloc[-1]
-        rsi = hist['RSI'].iloc[-1]
-        macd = hist['MACD'].iloc[-1]
-        macd_signal = hist['MACD_signal'].iloc[-1]
+        # Get current price safely
+        try:
+            current_price = stock.fast_info.get('lastPrice') or stock.fast_info.get('regularMarketPrice')
+            if current_price is None:
+                current_price = hist['Close'].iloc[-1]
+        except Exception:
+            current_price = hist['Close'].iloc[-1]
+
+        # Get SMAs with safety checks
+        def get_last_valid(series):
+            return series.iloc[-1] if not series.empty and not pd.isna(series.iloc[-1]) else 0
+
+        s20 = get_last_valid(hist['SMA20'])
+        s50 = get_last_valid(hist['SMA50'])
+        s200 = get_last_valid(hist['SMA200'])
         
         # Perfect Alignment Logic (Golden Zone: Price > 20 > 50 > 200)
-        is_perfect = current_price > s20 > s50 > s200
+        is_perfect = (current_price > s20 > s50 > s200) if (s20 and s50 and s200) else False
         
-        info = stock.info
+        # Get fundamentals safely
+        try:
+            info = stock.info
+            if not isinstance(info, dict): info = {}
+        except Exception:
+            info = {}
+
         score = 0
         if info.get('debtToEquity', 100) < 50: score += 40
         if info.get('profitMargins', 0) > 0.10: score += 30
         if info.get('operatingCashflow', 0) > 0: score += 30
 
         # Determine status - Retail Gold when perfect alignment AND strong fundamentals
-        # Golden Zone is active when Price > 20 > 50 > 200
         is_retail_gold = is_perfect and score >= 70
         
         result = {
             "ticker": ticker,
-            "price": round(current_price, 2),
+            "price": round(current_price, 2) if current_price else 0.0,
             "score": score,
             "status": "RETAIL GOLD" if is_retail_gold else "NEUTRAL",
             "alignment": "PERFECT" if is_perfect else "UNALIGNED"
